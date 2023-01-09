@@ -17,44 +17,47 @@ class Player;
 
 class Piece {
 public:
-    Coordinates location;
-    std::string name;
-    std::set<std::string> tags;
-    Player* loyalty;
-    char symbol;
-    Game* g;
-    std::string icon;
+	Coordinates location;
+	std::string name;
+	std::set<std::string> tags;
+	Player* loyalty;
+	char symbol;
+	Board* b;
+	std::string icon;
 
-    Piece(Game* g, Player* loyalty, char symbol, std::string name, Coordinates location, std::string icon) {
-        this->g = g;
-        this->loyalty = loyalty;
-        if (loyalty != nullptr && loyalty->lowerBoardSide)
-            this->symbol = (char)toupper(symbol);
-        else
-            this->symbol = (char)tolower(symbol);
+	Piece(Board* b, Player* loyalty, char symbol, std::string name, std::string icon) {
+		this->b = b;
+		this->loyalty = loyalty;
+		if (loyalty != nullptr && loyalty->lowerBoardSide)
+			this->symbol = (char)toupper(symbol);
+		else
+			this->symbol = (char)tolower(symbol);
 
-        this->name = name;
-        this->location = Coordinates(location);
-        this->icon = icon;
-    }
+		this->name = name;
+		this->location = Coordinates();
+		this->icon = icon;
+	}
 
-    void addTag(std::string tag) {
-        tags.insert(tag);
-    }
 
-    void removeTag(std::string tag) {
-        tags.erase(tag);
-    }
+	virtual Piece* clone() const = 0;
 
-    bool hasTag(std::string tag) {
-        return std::find(tags.begin(), tags.end(), tag) != tags.end();
-    }
+	void addTag(std::string tag) {
+		tags.insert(tag);
+	}
 
-    virtual std::set<BoardMove*> getMoves() = 0;
+	void removeTag(std::string tag) {
+		tags.erase(tag);
+	}
 
-    virtual std::string toString() {
-        return name + " at " + location.toString();
-    }
+	bool hasTag(std::string tag) {
+		return std::find(tags.begin(), tags.end(), tag) != tags.end();
+	}
+
+	virtual std::vector<BoardMove*> getMoves() = 0;
+
+	virtual std::string toString() {
+		return "" + name + " at " + location.toString();
+	}
 
 };
 

@@ -11,44 +11,54 @@ class Bishop : public Piece {
 public:
 
 
-    Bishop(Game* g, Player* loyalty, Coordinates location)
-        : Piece(g, loyalty, 'b', "Bishop", location,
-            loyalty->lowerBoardSide ? "../Resources/source_1/White/Bishop.jpg" : "../Resources/source_1/Black/Bishop.jpg") {
-    }
+	Bishop(Board* b, Player* loyalty)
+		: Piece(b, loyalty, 'b', "Bishop",
+			loyalty->lowerBoardSide ? "../Resources/source_1/White/Bishop.jpg" : "../Resources/source_1/Black/Bishop.jpg") {
+	}
+	Bishop* clone() const override {
+		return new Bishop(*this);
+	};
 
+	std::vector<BoardMove*> getMoves() {
+		std::vector<BoardMove*> out;
+		checkPositionAndMove(&out, Coordinates().right().up());
+		checkPositionAndMove(&out, Coordinates().left().up());
+		checkPositionAndMove(&out, Coordinates().right().down());
+		checkPositionAndMove(&out, Coordinates().left().down());
+		return out;
+	}
 
-    std::set<BoardMove*> getMoves() {
-        std::set<BoardMove*> out;
-        checkPositionAndMove(&out, Coordinates().right().up());
-        checkPositionAndMove(&out, Coordinates().left().up());
-        checkPositionAndMove(&out, Coordinates().right().down());
-        checkPositionAndMove(&out, Coordinates().left().down());
-        return out;
-    }
-
-    void checkPositionAndMove(std::set<BoardMove*>* out, Coordinates direction) {
-        Coordinates checkedLocation = location + direction;
-        while (g->gameboard->containsPiece(checkedLocation) &&
-            g->gameboard->bo[checkedLocation.value]->name == "empty") {
-            BoardMove* m = new BoardMove("move", "Move to " + checkedLocation.toString());
-            m->push_back(
-                [this, location = new Coordinates(location), checkedLocation = new Coordinates(checkedLocation)] {
-                    g->gameboard->MovePiece(*location, *checkedLocation);
-                });
-            out->insert(m);
-            checkedLocation += direction;
-        }
-        if (g->gameboard->containsPiece(checkedLocation) &&
-            g->gameboard->bo[checkedLocation.value]->loyalty != this->loyalty) {
-            BoardMove* m = new BoardMove("attack", "Attack " + g->gameboard->bo[checkedLocation.value]->toString());
-            m->push_back(
-                [this, location = new Coordinates(location), checkedLocation = new Coordinates(checkedLocation)] {
-                    g->gameboard->RemovePiece(*checkedLocation);
-            g->gameboard->MovePiece(*location, *checkedLocation);
-                });
-            out->insert(m);
-        }
-    }
+	void checkPositionAndMove(std::vector<BoardMove*>* out, Coordinates direction) {
+		Coordinates checkedLocation = location + direction;
+		while (b->containsPiece(checkedLocation) &&
+			b->getPiece(checkedLocation)->name == "empty") {
+			BoardMove* m = new BoardMove("move", "Move to " + checkedLocation.toString());
+			m->push_back(
+				[location = new Coordinates(location), checkedLocation = new Coordinates(checkedLocation)](Board* b) {
+					b->MovePiece(*location, *checkedLocation);
+				});
+			out->push_back(m);
+			checkedLocation += direction;
+		}
+		if (b->containsPiece(checkedLocation) &&
+			b->getPiece(checkedLocation)->loyalty != this->loyalty) {
+			checkChecking(checkedLocation);
+			BoardMove* m = new BoardMove("attack", "Attack " + b->getPiece(checkedLocation)->toString());
+			m->push_back(
+				[location = new Coordinates(location), checkedLocation = new Coordinates(checkedLocation)](Board* b) {
+					b->RemovePiece(*checkedLocation);
+					b->MovePiece(*location, *checkedLocation);
+				});
+			out->push_back(m);
+		}
+	}
+	void checkChecking(Coordinates checkedLocation) {
+		if (b->containsPiece(checkedLocation) &&
+			b->getPiece(checkedLocation)->loyalty != this->loyalty &&
+			b->getPiece(checkedLocation)->name =="King") {
+			addTag("checking");
+		}
+	}
 };
 
 #endif

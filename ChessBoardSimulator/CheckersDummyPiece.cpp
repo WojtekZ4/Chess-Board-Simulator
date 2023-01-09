@@ -9,28 +9,26 @@
 
 class CheckersDummyPiece : public Piece {
 public:
-    CheckersDummyPiece(Game* g, Player* loyalty) : Piece(g, loyalty, '-', "Other Actions", Coordinates(), "../Resources/Empty Space.jpg") {}
+	CheckersDummyPiece(Board* b, Player* loyalty) : Piece(b, loyalty, '-', "Other Actions", "../Resources/Empty Space.jpg") {}
+	CheckersDummyPiece* clone() const override {
+		return new CheckersDummyPiece(*this);
+	};
+	std::vector<BoardMove*> getMoves() {
+		std::vector<BoardMove*> out;
+		BoardMove* m = new BoardMove("surrender", "Surrender");
+		m->push_back([this](Board* b) {
+			auto pp = b->PlayersPieces(this->loyalty);
+		for (auto p : pp) {
+			p->addTag("surrendered");
+		}
+			});
+		out.push_back(m);
+		return out;
+	}
 
-    std::set<BoardMove*> getMoves() {
-        std::set<BoardMove*> out;
-        out.insert(surrenderMove());
-        return out;
-    }
-
-    BoardMove* surrenderMove() {
-        BoardMove* m = new BoardMove("Surrender", "Surrender");
-        std::set<Piece*> pp = g->gameboard->PlayersPieces(loyalty);
-        for (auto ppp : pp) {
-            m->push_back([ObjectPtr = g, ppp] {
-                ObjectPtr->gameboard->RemovePiece(ppp->location.value);
-                });
-        }
-        return m;
-    }
-
-    std::string toString() {
-        return name;
-    }
+	std::string toString() {
+		return name;
+	}
 };
 
 #endif

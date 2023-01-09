@@ -11,106 +11,142 @@
 
 class Soldier : public Piece {
 public:
-    bool orientatedUp;
-    Coordinates forward;
-    Soldier(Game* g, Player* loyalty, Coordinates location) : Piece(g, loyalty, 'o', "soldier",
-        location,
-        loyalty->lowerBoardSide ? "../Resources/source_1/White/Pawn.jpg" : "../Resources/source_1/Black/Pawn.jpg") {
-        this->orientatedUp = loyalty->lowerBoardSide;
-        if (orientatedUp)
-            forward = Coordinates().up();
-        else
-            forward = Coordinates().down();
-    }
+	bool orientatedUp;
+	Coordinates forward;
+	Soldier(Board* b, Player* loyalty) : Piece(b, loyalty, 'o', "Soldier",
+		loyalty->lowerBoardSide ? "../Resources/source_1/White/Pawn.jpg" : "../Resources/source_1/Black/Pawn.jpg") {
+		this->orientatedUp = loyalty->lowerBoardSide;
+		if (orientatedUp)
+			forward = Coordinates().up();
+		else
+			forward = Coordinates().down();
+	}
+	Soldier* clone() const override {
+		return new Soldier(*this);
+	};
+
+	std::vector<BoardMove*> getMoves() {
+		std::vector<BoardMove*> out;
 
 
-    std::set<BoardMove*> getMoves() {
-        std::set<BoardMove*> out;
+		checkPositionAndMove(&out, location.right() + forward);
+		checkPositionAndMove(&out, location.left() + forward);
 
-        if (orientatedUp) {
-            checkPositionAndMove(&out, location.up().right());
-            checkPositionAndMove(&out, location.up().left());
-        }
-        else {
-            checkPositionAndMove(&out, location.down().right());
-            checkPositionAndMove(&out, location.down().left());
-        }
+		checkPositionAndJump15(&out, location, Coordinates().right());
+		checkPositionAndJump15(&out, location, Coordinates().left());
+		return out;
+	}
 
-        if (orientatedUp) {
-            checkPositionAndJump(new BoardMove("jump", "jump to " + location.up().right().up().right().toString()), &out,
-                location,
-                location.up().right(), location.up().right().up().right());
-            checkPositionAndJump(new BoardMove("jump", "jump to " + location.up().left().up().left().toString()), &out,
-                location,
-                location.up().left(), location.up().left().up().left());
-        }
-        else {
-            checkPositionAndJump(new BoardMove("jump", "jump to " + location.down().right().down().right().toString()), &out,
-                location,
-                location.down().right(), location.down().right().down().right());
-            checkPositionAndJump(new BoardMove("jump", "jump to " + location.down().right().down().right().toString()), &out,
-                location,
-                location.down().right(), location.down().right().down().right());
-        }
-        return out;
-    }
+	void checkPositionAndMove(std::vector<BoardMove*>* out, Coordinates position) {
+		if (b->containsPiece(position) && b->getPiece(position)->name == "empty") {
+			BoardMove* m = new BoardMove("move", "Move to " + position.toString());
 
-    void checkPositionAndMove(std::set<BoardMove*>* out, Coordinates position) {
-        if (g->gameboard->containsPiece(position) && g->gameboard->bo[position.value]->name == "empty") {
-            BoardMove* m = new BoardMove("jump", "Jump to " + position.toString());
+			m->push_back([location = new Coordinates(location), position = new Coordinates(position)](Board* b) {
+				b->MovePiece(*location, *position);
+				});
 
-            m->push_back([this, location = new Coordinates(location), position = new Coordinates(position)] {
-                g->gameboard->MovePiece(*location, *position);
-                });
+			checkForPromotion(m, position);
+			out->push_back(m);
+		}
 
+	}
 
-            if (position.y() == 1 || position.y() == 8) {
-                m->description = m->description + " and promote to King";
-                m->push_back([this, position = new Coordinates(position)] {
-                    g->gameboard->RemovePiece(*position);
-                g->gameboard->PlacePiece(*position, new CheckersKing(g, loyalty, *position));
-                    });
-            }
-            out->insert(m);
-        }
+	void checkForPromotion(BoardMove* oldMove, Coordinates position) {
+		if ((position.y == 8 && orientatedUp) || (position.y == 1 && !orientatedUp)) {
+			oldMove->description = oldMove->description + " and promote to King";
+			oldMove->push_back([position = new Coordinates(position)](Board* b) {
+				Piece* oldPiece(b->getPiece(*position));
+				b->RemovePiece(*position);
+				b->PlacePiece(new CheckersKing(b, oldPiece->loyalty), *position);
+				});
+		}
+	}
+	void checkPositionAndJump15(std::vector<BoardMove*>* out, Coordinates currentPosition, Coordinates direction) {
+		Coordinates enemyPosition = currentPosition + forward + direction;
+		Coordinates emptyPosition = enemyPosition + forward + direction;
+		if (b->containsPiece(enemyPosition) &&
+			b->getPiece(enemyPosition)->name != "empty" &&
+			b->getPiece(enemyPosition)->loyalty != this->loyalty &&
+			b->containsPiece(emptyPosition) &&
+			b->getPiece(emptyPosition)->name == "empty") {
 
-    }
+			addTag("can attack");
 
-    void
-        checkPositionAndJump(BoardMove* oldMove, std::set<BoardMove*>* out, Coordinates currentPosition, Coordinates enemyPosition,
-            Coordinates emptyPosition) {
-        if (g->gameboard->containsPiece(enemyPosition) &&
-            g->gameboard->bo[enemyPosition.value]->loyalty != this->loyalty &&
-            g->gameboard->containsPiece(emptyPosition) && g->gameboard->bo[emptyPosition.value]->name == "empty") {
-            BoardMove* m = new BoardMove(*oldMove);
+			BoardMove* m = new BoardMove("jump", "Jump to " + emptyPosition.toString());
+			m->push_back([enemyPosition = new Coordinates(enemyPosition), currentPosition = new Coordinates(
+				currentPosition), emptyPosition = new Coordinates(emptyPosition)](Board* b) {
+					b->RemovePiece(*enemyPosition);
+					b->MovePiece(*currentPosition, *emptyPosition);
+				});
 
-            m->push_back([this, enemyPosition = new Coordinates(enemyPosition), currentPosition = new Coordinates(
-                currentPosition), emptyPosition = new Coordinates(emptyPosition)] {
-                    g->gameboard->RemovePiece(*enemyPosition);
-            g->gameboard->MovePiece(*currentPosition, *emptyPosition);
-                });
-            out->insert(m);
-            if (orientatedUp) {
-                m->description = m->description + "then jump to " + emptyPosition.up().right().up().right().toString();
-                checkPositionAndJump(m, out, emptyPosition, emptyPosition.up().right(),
-                    emptyPosition.up().right().up().right());
-                m->description = m->description + "then jump to " + emptyPosition.up().left().up().left().toString();
-                checkPositionAndJump(m, out, emptyPosition, emptyPosition.up().left(),
-                    emptyPosition.up().left().up().left());
-            }
-            else {
-                m->description =
-                    m->description + "then jump to " + emptyPosition.down().right().down().right().toString();
-                checkPositionAndJump(m, out, emptyPosition, emptyPosition.down().right(),
-                    emptyPosition.down().right().down().right());
-                m->description =
-                    m->description + "then jump to " + emptyPosition.down().left().down().left().toString();
-                checkPositionAndJump(m, out, emptyPosition, emptyPosition.down().left(),
-                    emptyPosition.down().left().down().left());
-            }
+			checkForPromotion(m, emptyPosition);
+			out->push_back(m);
 
-        }
-    }
+			checkPositionAndJump2(m, out, emptyPosition, Coordinates().right());
+			checkPositionAndJump2(m, out, emptyPosition, Coordinates().left());
+		}
+	}
+	void checkPositionAndJump2(BoardMove* oldMove, std::vector<BoardMove*>* out, Coordinates currentPosition, Coordinates direction) {
+		Coordinates enemyPosition = currentPosition + forward + direction;
+		Coordinates emptyPosition = enemyPosition + forward + direction;
+		if (b->containsPiece(enemyPosition) &&
+			b->getPiece(enemyPosition)->name != "empty" &&
+			b->getPiece(enemyPosition)->loyalty != this->loyalty &&
+			b->containsPiece(emptyPosition) &&
+			b->getPiece(emptyPosition)->name == "empty") {
+
+			addTag("can attack");
+
+			BoardMove* m = new BoardMove(*oldMove);
+			m->description = m->description + " then jump to " + emptyPosition.toString();
+
+			m->push_back([enemyPosition = new Coordinates(enemyPosition), currentPosition = new Coordinates(
+				currentPosition), emptyPosition = new Coordinates(emptyPosition)](Board* b) {
+					b->RemovePiece(*enemyPosition);
+					b->MovePiece(*currentPosition, *emptyPosition);
+				});
+
+			checkForPromotion(m, emptyPosition);
+			out->push_back(m);
+
+			checkPositionAndJump2(m, out, emptyPosition, Coordinates().right());
+			checkPositionAndJump2(m, out, emptyPosition, Coordinates().left());
+		}
+	}
+	//void checkPositionAndJump(BoardMove* oldMove, std::vector<BoardMove*>* out, Coordinates currentPosition, Coordinates enemyPosition,
+	//        Coordinates emptyPosition) {
+	//    if (g->gameboard->containsPiece(enemyPosition) &&
+	//        g->gameboard->getPiece(enemyPosition)->loyalty != this->loyalty &&
+	//        g->gameboard->containsPiece(emptyPosition) && g->gameboard->getPiece(emptyPosition)->name == "empty") {
+	//        BoardMove* m = new BoardMove(*oldMove);
+
+	//        m->push_back([this, enemyPosition = new Coordinates(enemyPosition), currentPosition = new Coordinates(
+	//            currentPosition), emptyPosition = new Coordinates(emptyPosition)] {
+	//                g->gameboard->RemovePiece(*enemyPosition);
+	//        g->gameboard->MovePiece(*currentPosition, *emptyPosition);
+	//            });
+	//        out->push_back(m);
+	//        if (orientatedUp) {
+	//            m->description = m->description + "then jump to " + emptyPosition.up().right().up().right().toString();
+	//            checkPositionAndJump(m, out, emptyPosition, emptyPosition.up().right(),
+	//                emptyPosition.up().right().up().right());
+	//            m->description = m->description + "then jump to " + emptyPosition.up().left().up().left().toString();
+	//            checkPositionAndJump(m, out, emptyPosition, emptyPosition.up().left(),
+	//                emptyPosition.up().left().up().left());
+	//        }
+	//        else {
+	//            m->description =
+	//                m->description + "then jump to " + emptyPosition.down().right().down().right().toString();
+	//            checkPositionAndJump(m, out, emptyPosition, emptyPosition.down().right(),
+	//                emptyPosition.down().right().down().right());
+	//            m->description =
+	//                m->description + "then jump to " + emptyPosition.down().left().down().left().toString();
+	//            checkPositionAndJump(m, out, emptyPosition, emptyPosition.down().left(),
+	//                emptyPosition.down().left().down().left());
+	//        }
+
+	//    }
+	//}
 };
 
 #endif

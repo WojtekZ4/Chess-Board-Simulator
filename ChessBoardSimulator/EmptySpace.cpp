@@ -8,12 +8,14 @@
 
 class EmptySpace : public Piece {
 public:
-    EmptySpace(Game* g, Coordinates location) : Piece(g, nullptr, '.', "empty", location, "../Resources/Empty Space.jpg") {}
-
-    std::set<BoardMove*> getMoves() {
-        std::set<BoardMove*> out;
-        return out;
-    }
+	EmptySpace(Board* b) : Piece(b, nullptr, '.', "empty", "../Resources/Empty Space.jpg") {}
+	EmptySpace* clone() const override {
+		return new EmptySpace(*this);
+	};
+	std::vector<BoardMove*> getMoves() {
+		std::vector<BoardMove*> out;
+		return out;
+	}
 };
 
 #endif

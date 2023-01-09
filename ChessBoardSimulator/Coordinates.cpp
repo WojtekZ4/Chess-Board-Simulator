@@ -9,74 +9,103 @@
 
 struct Coordinates {
 public:
-    int value;
 
-    Coordinates() {
-        this->value = 0;
-    };
+	int x;
+	int y;
 
-    Coordinates(int value) {
-        this->value = value;
-    };
+	Coordinates() {
+		this->x = 0;
+		this->y = 0;
+	};
 
-    Coordinates(std::string name) {
-        char first = name[0];
-        char second = name[1];
-        value = 0;
-        value += (first - 'a' + 1) * 10;
-        value += second - '1' + 1;
-    };
+	Coordinates(int x, int y) {
+		this->x = x;
+		this->y = y;
+	};
 
-    Coordinates(const Coordinates& other) {
-        this->value = other.value;
-    };
+	Coordinates(std::string name) {
+		char first = name[0];
+		char second = name[1];
+		this->x = 0;
+		this->y = 0;
+		x += first - 'a' + 1;
+		y += second - '1' + 1;
+	};
 
-    int x() { return value / 10; }
+	Coordinates(const Coordinates& other) {
+		this->x = other.x;
+		this->y = other.y;
+	};
 
-    int y() { return value % 10; }
+	Coordinates(std::pair<int, int> other) {
+		this->x = other.first;
+		this->y = other.second;
+	};
 
-    Coordinates operator+=(Coordinates c2) {
-        value += c2.value;
-        return *this;
-    }
+	Coordinates operator+=(Coordinates const& c2) {
+		x += c2.x;
+		y += c2.y;
+		return *this;
+	}
 
-    Coordinates operator-=(Coordinates c2) {
-        value -= c2.value;
-        return *this;
-    }
+	Coordinates operator-=(Coordinates const& c2) {
+		x -= c2.x;
+		y -= c2.y;
+		return *this;
+	}
 
-    Coordinates operator+(Coordinates c2) {
-        Coordinates c3(0);
-        c3.value += value;
-        c3.value += c2.value;
-        return c3;
-    }
+	Coordinates operator+(Coordinates const& c2) const {
+		Coordinates c3(*this);
+		c3 += c2;
+		return c3;
+	}
 
-    Coordinates operator-(Coordinates c2) {
-        Coordinates c3(0);
-        c3.value -= value;
-        c3.value -= c2.value;
-        return c3;
-    }
+	Coordinates operator-(Coordinates const& c2) const {
+		Coordinates c3(*this);
+		c3 -= c2;
+		return c3;
+	}
 
-    bool operator==(Coordinates c2) {
-        return this->value == c2.value;
-    }
 
-    Coordinates up() { return Coordinates(value + 1); }
 
-    Coordinates down() { return Coordinates(value - 1); }
+	bool operator == (Coordinates const& c2) const {
+		return this->x == c2.x && this->y == c2.y;
+	}
 
-    Coordinates right() { return Coordinates(value + 10); }
+	bool operator>(Coordinates const& c2) const {
+		return this->x == c2.x ? this->y > c2.y : this->x > c2.x;
+	}
 
-    Coordinates left() { return Coordinates(value - 10); }
+	bool operator<(Coordinates const& c2) const {
+		return this->x == c2.x ? this->y < c2.y : this->x < c2.x;
+	}
 
-    std::string toString() {
-        std::string out = "";
-        out += 'a' + value / 10 - 1;
-        out += '1' + value % 10 - 1;
-        return out;
-    }
+	bool operator>=(Coordinates const& c2) const {
+		return *this > c2 || *this == c2;
+	}
+
+	bool operator<=(Coordinates const& c2) const {
+		return *this < c2 || *this == c2;
+	}
+
+	Coordinates up() { return Coordinates(x, y + 1); }
+
+	Coordinates down() { return Coordinates(x, y - 1); }
+
+	Coordinates right() { return Coordinates(x + 1, y); }
+
+	Coordinates left() { return Coordinates(x - 1, y); }
+
+	std::pair<int, int> value() {
+		return std::pair<int, int>(x, y);
+	}
+
+	std::string toString() {
+		std::string out = "";
+		out += 'a' + x - 1;
+		out += '1' + y - 1;
+		return out;
+	}
 
 };
 
