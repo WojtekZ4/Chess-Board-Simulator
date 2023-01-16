@@ -28,14 +28,17 @@ public:
 	Piece(Board* b, Player* loyalty, char symbol, std::string name, std::string icon) {
 		this->b = b;
 		this->loyalty = loyalty;
-		if (loyalty != nullptr && loyalty->lowerBoardSide)
-			this->symbol = (char)toupper(symbol);
-		else
-			this->symbol = (char)tolower(symbol);
-
 		this->name = name;
 		this->location = Coordinates();
-		this->icon = icon;
+		//this->icon = icon;
+		if (loyalty != nullptr && loyalty->lowerBoardSide) {
+			this->symbol = (char)toupper(symbol);
+			this->icon = this->name + "_White";
+		}
+		else {
+			this->symbol = (char)tolower(symbol);
+			this->icon = this->name + "_Black";
+		}
 	}
 
 

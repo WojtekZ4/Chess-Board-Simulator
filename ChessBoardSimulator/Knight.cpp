@@ -19,7 +19,7 @@ public:
 
 	std::vector<BoardMove*> getMoves() {
 		std::vector<BoardMove*> out;
-
+		
 		checkPositionAndMove(&out, location.up().up().right());
 		checkPositionAndMove(&out, location.up().up().left());
 

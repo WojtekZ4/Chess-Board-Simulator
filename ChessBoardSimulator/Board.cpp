@@ -48,27 +48,6 @@ public:
 		return bo.find(location.value()) != bo.end();
 	}
 
-	//    std::string DrawBoard() {
-	//        std::string s = "";
-	//        s.append(" abcdefgh\n");
-	//        for (int i = 1; i < 9; i++) {
-	//            s += std::to_string(i);
-	//            for (int j = 1; j < 9; j++) {
-	//                s += bo[j * 10 + i]->symbol;
-	//            }
-	//            s += '\n';
-	//        }
-	//        return s;
-	//        return " abcdefgh\n"
-	//               "8rnbqkbnr\n"
-	//               "7pppppppp\n"
-	//               "6........\n"
-	//               "5........\n"
-	//               "4........\n"
-	//               "3........\n"
-	//               "2PPPPPPPP\n"
-	//               "1RNBQKBNR";
-	//    }
 
 	void MovePiece(Coordinates  start, Coordinates  end) {
 		Piece* toMove = getPiece(start);
@@ -80,15 +59,7 @@ public:
 		PlacePiece(new EmptySpace(this), location);
 	}
 
-	//    template<Field* location>
-	//    void RemovePiece_t() {
-	//        location->setContent(nullptr);
-	//    }
 
-	//    void ReplacePiece(Field *location, Piece *newPiece) {
-	//        location->setContent(newPiece);
-	//        newPiece->location=location->location;
-	//    }
 
 	void PlacePiece(Piece* newPiece, Coordinates location) {
 		bo[location.value()] = newPiece;
@@ -96,17 +67,7 @@ public:
 		newPiece->b = this;
 	}
 
-	//    void cos2() {
-	//        int (Board::*fun_ptr2)(int);
-	//        fun_ptr2=&Board::foo;
-	//        int (Board::*fun_ptr3)();
-	//        fun_ptr3=&Board::foo;
-	//        std::vector<void (Board::*)(Field *,Piece *)> dupa;
-	//
-	//        void (Board::*fun_ptr)(Field *,Piece *);
-	//        fun_ptr = &Board::PlacePiece;
-	//        dupa.push_back(fun_ptr);
-	//    }
+
 
 	std::set<Piece*> PlayersPieces(Player* piecesOwner) {
 		std::map<Coordinates, Piece*> out1;
@@ -132,11 +93,9 @@ public:
 		}
 		return allPosibleMoves;
 	}
-	//    Board() {}
-	//    Field* Movees(Piece* toMove){}
 
 
 };
-// copy only positive numbers:
+
 
 #endif

@@ -158,7 +158,26 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\Resources\Empty Space.jpg" />
     <Image Include="..\Resources\Logo.ico" />
+    <Image Include="..\Resources\source_1\Black\Bishop.jpg" />
+    <Image Include="..\Resources\source_1\Black\King.jpg" />
+    <Image Include="..\Resources\source_1\Black\Knight.jpg" />
+    <Image Include="..\Resources\source_1\Black\Pawn.jpg" />
+    <Image Include="..\Resources\source_1\Black\Queen.jpg" />
+    <Image Include="..\Resources\source_1\Black\Rook.jpg" />
+    <Image Include="..\Resources\source_1\White\Bishop.jpg" />
+    <Image Include="..\Resources\source_1\White\King.jpg" />
+    <Image Include="..\Resources\source_1\White\Knight.jpg" />
+    <Image Include="..\Resources\source_1\White\Pawn.jpg" />
+    <Image Include="..\Resources\source_1\White\Queen.jpg" />
+    <Image Include="..\Resources\source_1\White\Rook.jpg" />
+    <Image Include="Bishop1.jpg" />
+    <Image Include="Pawn3.jpg" />
+    <Image Include="Pawn4.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram3.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

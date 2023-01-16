@@ -22,6 +22,15 @@
     <Filter Include="Source Files\chess">
       <UniqueIdentifier>{e001c009-e889-47f0-9135-881af46b3738}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Chess Pieces">
+      <UniqueIdentifier>{d967e778-986f-41f4-940a-f6fe3deccb3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Chess Pieces\Black">
+      <UniqueIdentifier>{e873a643-2138-4605-9aea-2bac56331e8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Chess Pieces\White">
+      <UniqueIdentifier>{542ebbfe-50da-4131-a8d8-547d7421c97c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainForm.cpp">
@@ -103,5 +112,56 @@
     <Image Include="..\Resources\Logo.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\Resources\source_1\Black\Bishop.jpg">
+      <Filter>Resource Files\Chess Pieces\Black</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\Black\King.jpg">
+      <Filter>Resource Files\Chess Pieces\Black</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\Black\Knight.jpg">
+      <Filter>Resource Files\Chess Pieces\Black</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\Black\Pawn.jpg">
+      <Filter>Resource Files\Chess Pieces\Black</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\Black\Queen.jpg">
+      <Filter>Resource Files\Chess Pieces\Black</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\Black\Rook.jpg">
+      <Filter>Resource Files\Chess Pieces\Black</Filter>
+    </Image>
+    <Image Include="..\Resources\Empty Space.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\White\Bishop.jpg">
+      <Filter>Resource Files\Chess Pieces\White</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\White\King.jpg">
+      <Filter>Resource Files\Chess Pieces\White</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\White\Knight.jpg">
+      <Filter>Resource Files\Chess Pieces\White</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\White\Pawn.jpg">
+      <Filter>Resource Files\Chess Pieces\White</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\White\Queen.jpg">
+      <Filter>Resource Files\Chess Pieces\White</Filter>
+    </Image>
+    <Image Include="..\Resources\source_1\White\Rook.jpg">
+      <Filter>Resource Files\Chess Pieces\White</Filter>
+    </Image>
+    <Image Include="Pawn3.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bishop1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Pawn4.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram3.cd" />
   </ItemGroup>
 </Project>

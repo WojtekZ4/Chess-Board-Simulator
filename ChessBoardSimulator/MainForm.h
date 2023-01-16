@@ -48,15 +48,15 @@ namespace ChessBoardSimulator {
 
 
 
-
-
+	private:
+		System::ComponentModel::ComponentResourceManager^ resources;
 	public:
 		   System::Collections::Generic::List<IntPtr> allGames;
 		/*System::Collections::Generic::List<Game^> allGames;*/
 		MainForm(std::list<Game*> posibleGames)
 		{
 			InitializeComponent();
-
+			resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
 			interactionPanel->Controls->Clear();
 
 			for (auto it : posibleGames) {
@@ -116,7 +116,11 @@ namespace ChessBoardSimulator {
 
 				auto o = (PictureBox^)DBoard->GetControlFromPosition(c.x - 1, 7 - (c.y - 1));
 				String^ message = gcnew String(cc.second->icon.c_str());
-				o->Load(message);
+				/*auto c = resources->GetObject(L"$this.Icon");*/
+				System::Drawing::Bitmap^ bmp = (cli::safe_cast<System::Drawing::Bitmap^>(resources->GetObject(message)));
+				//System::Drawing::Bitmap^ bmp = gcnew System::Drawing::Bitmap(Properties::Resources::myImage);
+				o->Image = bmp;
+				//o->Load(message);
 			}
 			const char* message = activeGame->activePlayer->name.c_str();
 			String^ result = marshal_as<String^>(message);
@@ -2102,7 +2106,7 @@ private: System::Windows::Forms::Button^ exitGameButton;
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1100, 758);
+			this->ClientSize = System::Drawing::Size(1101, 750);
 			this->Controls->Add(this->exitGameButton);
 			this->Controls->Add(this->label65);
 			this->Controls->Add(this->ActivePlayerName);

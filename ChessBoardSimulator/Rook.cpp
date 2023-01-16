@@ -26,11 +26,7 @@ public:
 		checkPositionAndMove(&out, Coordinates().down());
 		checkPositionAndMove(&out, Coordinates().right());
 		checkPositionAndMove(&out, Coordinates().left());
-		checkCastle(out);
 		return out;
-	}
-
-	void checkCastle(std::vector<BoardMove*>out) {
 	}
 
 	void checkPositionAndMove(std::vector<BoardMove*>* out, Coordinates direction) {

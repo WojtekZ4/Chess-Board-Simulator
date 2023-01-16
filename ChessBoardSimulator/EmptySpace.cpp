@@ -8,7 +8,9 @@
 
 class EmptySpace : public Piece {
 public:
-	EmptySpace(Board* b) : Piece(b, nullptr, '.', "empty", "../Resources/Empty Space.jpg") {}
+	EmptySpace(Board* b) : Piece(b, nullptr, '.', "empty", "../Resources/Empty Space.jpg") {
+		this->icon = "Empty_Space";
+	}
 	EmptySpace* clone() const override {
 		return new EmptySpace(*this);
 	};
